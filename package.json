@@ -12,6 +12,7 @@
   "dependencies": {
     "@fontsource-variable/mona-sans": "^5.2.8",
     "@fontsource/mona-sans": "^5.2.8",
+    "@mux/mux-video-react": "^0.31.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.40.0",

@@ -1,20 +1,28 @@
 "use client";
 
+import { useState } from "react";
+import MuxVideo from "@mux/mux-video-react";
 import { motion } from "framer-motion";
 import { TransitionLink } from "./components/TransitionLink";
 
 export default function Home() {
+  const [videoReady, setVideoReady] = useState(false);
   return (
     <main className="relative h-screen w-screen overflow-hidden flex items-end justify-center py-16">
-      <video
+      <MuxVideo
+        playbackId="QfnB4SbExEoa27n5zsXi2mf02KrMqJMmZjJ1wGrkYoMI"
+        streamType="on-demand"
         autoPlay
         muted
         loop
         playsInline
-        className="absolute inset-0 w-full h-full object-cover -z-10"
-      >
-        <source src="/videos/home_demo.mp4" type="video/mp4" />
-      </video>
+        preload="auto"
+        onPlaying={() => setVideoReady(true)}
+        className={`absolute inset-0 w-full h-full -z-10 scale-110 transition-opacity duration-1000 ease-out ${
+          videoReady ? "opacity-100" : "opacity-0"
+        }`}
+        style={{ "--media-object-fit": "cover" } as React.CSSProperties}
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 24, scale: 0.96 }}
