@@ -3,6 +3,7 @@
 import Image, { type StaticImageData } from "next/image";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import MobileMenu from "../components/MobileMenu";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import zenStones from "../../../public/images/zen-stones.png";
@@ -11,6 +12,8 @@ import kitchenCounter from "../../../public/images/kitchen-counter-decor.png";
 import projectIntro from "../../../public/images/project-intro-video.png";
 import aurumBrand from "../../../public/images/aurum-brand-book.png";
 import { TransitionLink } from "../components/TransitionLink";
+import { NAV_LINKS_LEFT, NAV_LINKS_RIGHT } from "../components/nav-links";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 const TIMELINE_ITEMS = [
   {
@@ -40,6 +43,9 @@ const TIMELINE_ITEMS = [
   },
 ];
 
+const HERO_NAV_GROUP_CLASS =
+  "hidden lg:flex gap-10 xl:gap-14 uppercase tracking-widest text-sm";
+
 interface TimelineItemProps {
   item: {
     id: string;
@@ -52,45 +58,43 @@ interface TimelineItemProps {
 const TimelineItem = ({ item, index }: TimelineItemProps) => {
   const isEven = index % 2 === 0;
   const itemRef = useRef<HTMLDivElement>(null);
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const { scrollYProgress } = useScroll({
     target: itemRef,
     offset: ["start center", "end center"],
   });
 
-  // Hold in place through the item, then slide up out of view as the next item enters.
+  // Desktop only: hold in place through the item, then slide up out of view as the next item enters.
+  // On mobile the title sits statically above the image.
   const titleY = useTransform(scrollYProgress, [0.7, 1], ["0%", "100%"]);
 
   return (
     <div
       ref={itemRef}
-      className={`relative flex items-stretch w-full gap-8 z-10 py-10 overflow-visible ${
-        isEven ? "flex-row" : "flex-row-reverse"
+      className={`relative flex flex-col w-full gap-4 md:gap-8 z-10 py-6 md:py-10 pl-8 sm:pl-10 md:pl-0 overflow-visible md:items-stretch ${
+        isEven ? "md:flex-row" : "md:flex-row-reverse"
       }`}
     >
+      {/* Title */}
       <div
-        className={`w-1/3 relative flex ${isEven ? "justify-end" : "justify-start"}`}
+        className={`md:w-1/3 relative flex ${isEven ? "md:justify-end" : "md:justify-start"}`}
       >
-        <div className="sticky top-1/2 h-fit overflow-hidden">
+        <div className="md:sticky md:top-1/2 h-fit overflow-hidden">
           <motion.div
-            className="tracking-widest uppercase text-b2 flex flex-col items-start gap-4"
-            style={{ y: titleY }}
+            className="tracking-widest uppercase flex flex-row items-baseline gap-3 md:flex-col md:items-start md:gap-4"
+            style={{ y: isDesktop ? titleY : 0 }}
           >
             <span className="text-sh1 text-neutral-60">{item.id}</span>
-            <span
-              className="text-h2 text-black"
-              style={{
-                writingMode: "vertical-rl",
-                transform: "rotate(180deg)",
-              }}
-            >
+            <span className="text-h2 text-black md:[writing-mode:vertical-rl] md:rotate-180">
               {item.title}
             </span>
           </motion.div>
         </div>
       </div>
 
-      <div className="w-2/3 flex flex-col justify-center">
+      {/* Image */}
+      <div className="md:w-2/3 flex flex-col justify-center">
         <div className="relative overflow-hidden bg-stone-300 cursor-pointer group">
           <Image
             src={item.image}
@@ -99,9 +103,10 @@ const TimelineItem = ({ item, index }: TimelineItemProps) => {
           />
 
           <div className="absolute inset-0 flex justify-center items-center">
+            {/* Visible by default on touch devices; hover-reveal only where hover exists */}
             <TransitionLink
               href="/home"
-              className="opacity-0 scale-75 h-[200px] group-hover:opacity-100 p-10 group-hover:scale-100 inline-flex items-center justify-center uppercase tracking-widest transition-all duration-500 ease-out border border-[#CEC7BF] text-h4 text-white backdrop-blur-[7.5px] bg-[rgba(0,0,0,0.35)] rounded-full  hover:bg-[rgba(0,0,0,0.45)] text-center"
+              className="can-hover:opacity-0 can-hover:scale-75 group-hover:opacity-100 group-hover:scale-100 h-[120px] md:h-[200px] p-6 md:p-10 inline-flex items-center justify-center uppercase tracking-widest transition-all duration-500 ease-out border border-[#CEC7BF] text-h4 text-white backdrop-blur-[7.5px] bg-[rgba(0,0,0,0.35)] rounded-full hover:bg-[rgba(0,0,0,0.45)] text-center"
             >
               View detail
             </TransitionLink>
@@ -138,47 +143,36 @@ export default function HomeContent() {
   return (
     <div className="flex flex-col min-h-screen bg-stone-200">
       {/* Hero Section */}
-      <section className="relative h-screen w-full flex flex-col justify-between p-12 pb-12 text-stone-200">
+      <section className="relative h-dvh w-full flex flex-col justify-between px-5 sm:px-8 lg:px-12 xl:px-16 py-6 md:py-12 text-stone-200">
         <motion.header
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-          className="flex justify-between items-center top-0 w-full z-50 text-stone-100 font-mona container mx-auto"
+          className="flex justify-between items-center w-full z-50 text-stone-100 font-mona container mx-auto"
         >
-          <div className="flex gap-14 uppercase tracking-widest text-sm">
-            <TransitionLink
-              href="#"
-              className="hover:opacity-70 transition-opacity"
-            >
-              The brief
-            </TransitionLink>
-            <TransitionLink
-              href="#"
-              className="hover:opacity-70 transition-opacity"
-            >
-              Renders
-            </TransitionLink>
-            <TransitionLink
-              href="#"
-              className="hover:opacity-70 transition-opacity"
-            >
-              Brochure
-            </TransitionLink>
-          </div>
-          <div className="flex gap-14 uppercase tracking-widest text-sm">
-            <TransitionLink
-              href="#"
-              className="hover:opacity-70 transition-opacity"
-            >
-              Ezplore | Finished
-            </TransitionLink>
-            <TransitionLink
-              href="#"
-              className="hover:opacity-70 transition-opacity"
-            >
-              Animation
-            </TransitionLink>
-          </div>
+          <nav className={HERO_NAV_GROUP_CLASS}>
+            {NAV_LINKS_LEFT.map((link) => (
+              <TransitionLink
+                key={link.label}
+                href={link.href}
+                className="hover:opacity-70 transition-opacity"
+              >
+                {link.label}
+              </TransitionLink>
+            ))}
+          </nav>
+          <nav className={HERO_NAV_GROUP_CLASS}>
+            {NAV_LINKS_RIGHT.map((link) => (
+              <TransitionLink
+                key={link.label}
+                href={link.href}
+                className="hover:opacity-70 transition-opacity"
+              >
+                {link.label}
+              </TransitionLink>
+            ))}
+          </nav>
+          <MobileMenu className="ml-auto text-stone-100" />
         </motion.header>
 
         <motion.div
@@ -203,23 +197,23 @@ export default function HomeContent() {
           className="relative z-10"
         >
           <motion.div
-            className="flex justify-center gap-8 items-center font-sans text-sm tracking-wide container mx-auto"
+            className="flex flex-col xl:flex-row justify-center gap-3 xl:gap-8 items-center font-sans text-sm tracking-wide container mx-auto"
             style={{
               scale: heroTextScale,
               opacity: heroTextOpacity,
               y: heroTextY,
             }}
           >
-            <div className="flex-1 flex flex-col gap-1 text-end font-mona">
+            <div className="order-2 xl:order-1 xl:flex-1 flex flex-col gap-1 text-center xl:text-end font-mona">
               <p className="text-b1">97 Ahumoana Drive, Weiti Bay</p>
               <p className="text-b1">Okura Bush | Auckland | New Zealand</p>
             </div>
 
-            <div className="uppercase text-h0 text-white text-center">
+            <div className="order-1 xl:order-2 uppercase text-h0 text-white text-center">
               AURUM
             </div>
 
-            <div className="flex-1 flex flex-col items-start gap-6 font-mona">
+            <div className="order-3 xl:flex-1 flex flex-col items-center xl:items-start gap-6 font-mona">
               <p className="text-b1">
                 House and Land &nbsp;&nbsp;|&nbsp;&nbsp; 2026
               </p>
@@ -232,12 +226,15 @@ export default function HomeContent() {
 
       <main className="grow py-16">
         {/* Section 1: Introduction, Address + Images */}
-        <section ref={section1Ref} className="relative h-[350vh] w-full">
-          <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
+        <section
+          ref={section1Ref}
+          className="relative h-[300vh] md:h-[350vh] w-full"
+        >
+          <div className="sticky top-0 h-dvh w-full flex items-center justify-center overflow-hidden">
             {/* Top Left Image */}
             <motion.div
               style={{ y: imagesY }}
-              className="absolute top-0 left-0 w-[35vw] md:w-[25vw] h-[35vh] md:h-[30vh]"
+              className="absolute top-0 left-0 w-[34vw] md:w-[25vw] h-[22vh] md:h-[30vh]"
             >
               <Image
                 src="/images/tropical-beach-aerial.png"
@@ -250,7 +247,7 @@ export default function HomeContent() {
             {/* Middle Left Image */}
             <motion.div
               style={{ y: imagesY }}
-              className="absolute bottom-[3%] left-[10%] lg:left-[20%] w-[40vw] md:w-[20vw] h-[25vh] md:h-[25vh]"
+              className="absolute bottom-[3%] left-[4%] md:left-[10%] lg:left-[20%] w-[38vw] md:w-[20vw] h-[18vh] md:h-[25vh]"
             >
               <Image
                 src="/images/seaside-promenade-running.png"
@@ -263,7 +260,7 @@ export default function HomeContent() {
             {/* Bottom Left Image */}
             <motion.div
               style={{ y: imagesY }}
-              className="absolute bottom-[-80%] left-[5%] lg:left-[3%] w-[40vw] md:w-[20vw] h-[45vh] md:h-[55vh]"
+              className="absolute bottom-[-80%] left-[5%] lg:left-[3%] w-[38vw] md:w-[20vw] h-[35vh] md:h-[55vh]"
             >
               <Image
                 src="/images/pool_lounge.png"
@@ -276,7 +273,7 @@ export default function HomeContent() {
             {/* Top Right Image */}
             <motion.div
               style={{ y: imagesY }}
-              className="absolute top-[15%] lg:top-[20%] right-0 w-[25vw] md:w-[25vw] h-[55vh] md:h-[60vh]"
+              className="absolute top-[15%] lg:top-[20%] right-0 w-[28vw] md:w-[25vw] h-[38vh] md:h-[60vh]"
             >
               <Image
                 src="/images/coastal-neighborhood-aerial.png"
@@ -289,7 +286,7 @@ export default function HomeContent() {
             {/* Bottom Right Image */}
             <motion.div
               style={{ y: imagesY }}
-              className="absolute bottom-[-100%] right-[5%] lg:right-[10%] w-[20vw] md:w-[25vw] h-[55vh] md:h-[60vh]"
+              className="absolute bottom-[-100%] right-[5%] lg:right-[10%] w-[30vw] md:w-[25vw] h-[40vh] md:h-[60vh]"
             >
               <Image
                 src="/images/champagne_glasses.png"
@@ -300,7 +297,7 @@ export default function HomeContent() {
             </motion.div>
 
             {/* Center Text */}
-            <div className="flex flex-col items-center justify-center text-center gap-16 md:gap-20 z-10 max-w-4xl px-4 mt-8">
+            <div className="flex flex-col items-center justify-center text-center gap-10 md:gap-20 z-10 max-w-4xl px-5 mt-8 max-md:mx-5 max-md:py-10 max-md:bg-stone-200/80 max-md:backdrop-blur-sm">
               <h4 className="uppercase text-neutral-60 text-h4">
                 House and Land
               </h4>
@@ -318,15 +315,15 @@ export default function HomeContent() {
         {/* Section 2: Scrolling Progress */}
         <section
           ref={containerRef}
-          className="relative w-full bg-stone-200 py-[200px]"
+          className="relative w-full bg-stone-200 py-20 md:py-[200px]"
         >
-          {/* Global Left and Right Sticky Text */}
-          <div className="absolute inset-0 pointer-events-none z-0">
-            <div className="sticky top-20 h-screen w-full flex justify-between px-8 md:px-0">
+          {/* Global Left and Right Sticky Text (tablet and up) */}
+          <div className="absolute inset-0 pointer-events-none z-0 hidden md:block">
+            <div className="sticky top-20 h-screen w-full flex justify-between px-6 xl:px-0">
               {/* Left side */}
               <div className="relative h-full flex items-center">
                 <motion.div
-                  className="absolute left-0 lg:left-6 top-1/2 -translate-y-1/2 bg-stone-200 whitespace-nowrap text-brand-5/50 tracking-widest uppercase text-b2"
+                  className="absolute left-0 xl:left-6 top-1/2 -translate-y-1/2 bg-stone-200 whitespace-nowrap text-brand-5/50 tracking-widest uppercase text-b2"
                   style={{
                     writingMode: "vertical-lr",
                     rotate: 180,
@@ -339,7 +336,7 @@ export default function HomeContent() {
 
               {/* Right side */}
               <div className="relative h-full flex justify-end">
-                <div className="w-px h-[90vh] bg-brand-4 relative right-6 lg:right-8">
+                <div className="w-px h-[90vh] bg-brand-4 relative right-0 xl:right-8">
                   <motion.div
                     className="absolute left-1/2 -translate-x-1/2 top-0 bg-stone-200 p-[10px] whitespace-nowrap  text-brand-5/50 tracking-widest uppercase text-b2"
                     style={{
@@ -356,9 +353,9 @@ export default function HomeContent() {
           </div>
 
           {/* Timeline Content */}
-          <div className="relative z-10 container mx-auto pt-[20vh] pb-[20vh] flex flex-col pointer-events-auto">
-            {/* Center Line spanning entire timeline content */}
-            <div className="absolute left-1/2 top-0 bottom-0 w-[2px] bg-brand-3 -translate-x-1/2 z-0">
+          <div className="relative z-10 container mx-auto px-5 sm:px-8 md:px-12 xl:px-16 pt-[10vh] pb-[10vh] md:pt-[20vh] md:pb-[20vh] flex flex-col pointer-events-auto">
+            {/* Center Line spanning entire timeline content (left rail on mobile) */}
+            <div className="absolute left-5 sm:left-8 md:left-1/2 top-0 bottom-0 w-[2px] bg-brand-3 -translate-x-1/2 z-0">
               {/* Top Dot */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-brand-4" />
 

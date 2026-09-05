@@ -2,6 +2,11 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { TransitionLink } from "./TransitionLink";
+import MobileMenu from "./MobileMenu";
+import { NAV_LINKS_LEFT, NAV_LINKS_RIGHT } from "./nav-links";
+
+const NAV_GROUP_CLASS =
+  "hidden lg:flex gap-10 xl:gap-14 uppercase tracking-widest font-mona text-xs text-b1! text-[#876E3D]";
 
 export default function Header() {
   const { scrollY } = useScroll();
@@ -12,29 +17,21 @@ export default function Header() {
   return (
     <motion.header
       style={{ opacity, pointerEvents }}
-      className="px-16 py-4 fixed top-0 left-0 w-full z-50 bg-stone-200 border-b border-stone-400"
+      className="px-5 sm:px-8 lg:px-12 xl:px-16 py-4 fixed top-0 left-0 w-full z-50 bg-stone-200 border-b border-stone-400"
     >
       <div className="container flex justify-between items-center mx-auto">
-        <div className="flex gap-14 uppercase tracking-widest font-mona text-xs text-b1! text-[#876E3D]">
-          <TransitionLink
-            href="#"
-            className="hover:opacity-70 transition-opacity"
-          >
-            The brief
-          </TransitionLink>
-          <TransitionLink
-            href="#"
-            className="hover:opacity-70 transition-opacity"
-          >
-            Renders
-          </TransitionLink>
-          <TransitionLink
-            href="#"
-            className="hover:opacity-70 transition-opacity"
-          >
-            Brochure
-          </TransitionLink>
-        </div>
+        <nav className={NAV_GROUP_CLASS}>
+          {NAV_LINKS_LEFT.map((link) => (
+            <TransitionLink
+              key={link.label}
+              href={link.href}
+              className="hover:opacity-70 transition-opacity"
+            >
+              {link.label}
+            </TransitionLink>
+          ))}
+        </nav>
+
         <div className="overflow-hidden pt-1 pb-1">
           <motion.div
             style={{ y: textY }}
@@ -43,20 +40,20 @@ export default function Header() {
             AURUM
           </motion.div>
         </div>
-        <div className="flex gap-14 uppercase tracking-widest font-mona text-xs text-b1! text-[#876E3D]">
-          <TransitionLink
-            href="#"
-            className="hover:opacity-70 transition-opacity"
-          >
-            Ezplore | Finished
-          </TransitionLink>
-          <TransitionLink
-            href="#"
-            className="hover:opacity-70 transition-opacity"
-          >
-            Animation
-          </TransitionLink>
-        </div>
+
+        <nav className={NAV_GROUP_CLASS}>
+          {NAV_LINKS_RIGHT.map((link) => (
+            <TransitionLink
+              key={link.label}
+              href={link.href}
+              className="hover:opacity-70 transition-opacity"
+            >
+              {link.label}
+            </TransitionLink>
+          ))}
+        </nav>
+
+        <MobileMenu className="text-black" />
       </div>
     </motion.header>
   );
