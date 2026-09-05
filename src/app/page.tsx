@@ -8,7 +8,7 @@ import { TransitionLink } from "./components/TransitionLink";
 export default function Home() {
   const [videoReady, setVideoReady] = useState(false);
   return (
-    <main className="relative h-screen w-screen overflow-hidden flex items-end justify-center py-16">
+    <main className="relative h-dvh w-full overflow-hidden flex items-end justify-center py-10 md:py-16">
       <MuxVideo
         playbackId="QfnB4SbExEoa27n5zsXi2mf02KrMqJMmZjJ1wGrkYoMI"
         streamType="on-demand"
@@ -18,7 +18,7 @@ export default function Home() {
         playsInline
         preload="auto"
         onPlaying={() => setVideoReady(true)}
-        className={`absolute inset-0 w-full h-full -z-10 scale-110 transition-opacity duration-1000 ease-out ${
+        className={`absolute inset-0 w-full h-full object-cover -z-10 scale-110 transition-opacity duration-1000 ease-out ${
           videoReady ? "opacity-100" : "opacity-0"
         }`}
         style={{ "--media-object-fit": "cover" } as React.CSSProperties}
@@ -36,7 +36,7 @@ export default function Home() {
       >
         <TransitionLink
           href="/home"
-          className="inline-flex items-center justify-center uppercase tracking-widest transition-all duration-500 ease-out border border-[#CEC7BF] text-h4 text-white backdrop-blur-[7.5px] bg-[rgba(0,0,0,0.35)] rounded-full aspect-square hover:bg-[rgba(0,0,0,0.45)] h-[140px] mb-16"
+          className="inline-flex items-center justify-center uppercase tracking-widest transition-all duration-500 ease-out border border-[#CEC7BF] text-h4 text-white backdrop-blur-[7.5px] bg-[rgba(0,0,0,0.35)] rounded-full aspect-square hover:bg-[rgba(0,0,0,0.45)] h-[110px] md:h-[140px] mb-8 md:mb-16"
         >
           Enter
         </TransitionLink>

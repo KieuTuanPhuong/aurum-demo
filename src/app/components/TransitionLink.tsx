@@ -10,7 +10,12 @@ interface TransitionLinkProps extends LinkProps {
   href: string;
 }
 
-export function TransitionLink({ children, href, ...props }: TransitionLinkProps) {
+export function TransitionLink({
+  children,
+  href,
+  onClick,
+  ...props
+}: TransitionLinkProps) {
   const { navigateWithTransition } = useTransition();
 
   return (
@@ -18,11 +23,14 @@ export function TransitionLink({ children, href, ...props }: TransitionLinkProps
       href={href}
       {...props}
       onClick={(e) => {
+        onClick?.(e);
+        if (e.defaultPrevented) return;
+
         // Allow ctrl/cmd + click to open in new tab normally
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
           return;
         }
-        
+
         // Let external links or anchors fall back to default behavior
         if (href.startsWith("http") || href.startsWith("#")) {
           return;
